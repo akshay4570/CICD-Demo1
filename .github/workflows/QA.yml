@@ -47,3 +47,9 @@ jobs:
       run: sfdx force:source:convert --rootdir=force-app --manifest=package/package.xml --outputdir=convert
     - name: 'Run Test on Metadata'
       run: sfdx force:mdapi:deploy --deploydir=convert -u hub-org
+
+  github-actions-environment-variables-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List of the GitHub Actions environment variables on Windows
+        run: env
