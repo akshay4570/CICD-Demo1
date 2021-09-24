@@ -6,6 +6,7 @@ import REVENUE_FIELD from '@salesforce/schema/Account.AnnualRevenue';
 import INDUSTRY_FIELD from '@salesforce/schema/Account.Industry';
 export default class AccountCreator extends LightningElement {
     objectApiName = ACCOUNT_OBJECT;
+    x = 4;
     fields = [NAME_FIELD, REVENUE_FIELD, INDUSTRY_FIELD];
     handleSuccess(event) {
         const toastEvent = new ShowToastEvent({
