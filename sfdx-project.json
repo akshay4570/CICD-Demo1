@@ -5,8 +5,7 @@
       "default": true
     },
     {
-      "path": ".",
-      "default": false
+      "path": ""
     }
   ],
   "name": "CICD-Demo1",
