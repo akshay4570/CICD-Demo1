@@ -28,7 +28,7 @@ jobs:
     - name: 'Build and Deploy'
       run: |
         npm install sfdx-cli
-        node_modules/sfdx-cli/bin/run --versions
+        node_modules/sfdx-cli/bin/run --version
         node_modules/sfdx-cli/bin/run plugins --core
         sfdx plugins:install @salesforce/sfdx-scanner
  # Runs a set of commands using the runners shell
