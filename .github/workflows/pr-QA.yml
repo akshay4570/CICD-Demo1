@@ -14,7 +14,8 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    env:
+      sfdx: "node_modules/sfdx-cli/bin/run"
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -31,8 +32,6 @@ jobs:
         node_modules/sfdx-cli/bin/run --version
         node_modules/sfdx-cli/bin/run plugins --core
         $sfdx plugins:install @salesforce/sfdx-scanner
-      env:
-        sfdx: "node_modules/sfdx-cli/bin/run"
  # Runs a set of commands using the runners shell
     - name: 'Decrypt file'
       run: openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out server.key -base64 -K ${{secrets.DECRYPTION_KEY}} -iv ${{secrets.DECRYPTION_IV}}
