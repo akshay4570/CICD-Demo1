@@ -5,8 +5,8 @@ name: CI
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  pull_request:
-    branches: [ QA_Release1 ]
+  push:
+    branches: [ staging_Release1 ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       sfdx: "node_modules/sfdx-cli/bin/run"
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -38,25 +39,10 @@ jobs:
     - name: 'Authorize'
       run: |
         echo username value ${{ secrets.USERNAME_STAGING }}
-        $sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --setdefaultdevhubusername --setalias=hub-org
-    - name: "Install App and Create Delta"   
-      run: |
-        sudo npm install sfdx-git-delta@latest -g
-        git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
-        git fetch --all
-        git checkout -b pr
-        git --no-pager diff --name-status pr origin/QA_Release1
-        sgd --to pr --from origin/QA_Release1 --repo . --output .
+        $sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY_STG }} --username=${{ secrets.USERNAME_STG }} --jwtkeyfile server.key --setdefaultdevhubusername --setalias=hub-org
         cat package/package.xml
-    - name: 'Static Code Analysis'
-      run: $sfdx scanner:run --target=force-app --outputfile=results.csv --format=csv > results.csv
-    - name: Archive static code analysis results
-      uses: actions/upload-artifact@v2
-      with:
-        name: static-code-analysis-report
-        path: results.csv
     - name: 'Convert Metadata'
       run: $sfdx force:source:convert --rootdir=force-app --manifest=package/package.xml --outputdir=convert
-    - name: 'Run Test on Metadata'
-      run: $sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -u hub-org
+    - name: 'Deploy'
+      run: $sfdx force:mdapi:deploy --deploydir=convert -u hub-org
 
