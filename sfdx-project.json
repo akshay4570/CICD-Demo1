@@ -5,7 +5,7 @@
       "default": true
     },
     {
-      "path": ""
+      "path": "package"
     }
   ],
   "name": "CICD-Demo1",
