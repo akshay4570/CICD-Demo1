@@ -3,6 +3,10 @@
     {
       "path": "force-app",
       "default": true
+    },
+    {
+      "path": "CICD-Demo1",
+      "default": false
     }
   ],
   "name": "CICD-Demo1",
