@@ -30,14 +30,14 @@ jobs:
         npm install sfdx-cli
         node_modules/sfdx-cli/bin/run --version
         node_modules/sfdx-cli/bin/run plugins --core
-        sfdx plugins:install @salesforce/sfdx-scanner
+        node_modules/sfdx-cli/bin/run plugins:install @salesforce/sfdx-scanner
  # Runs a set of commands using the runners shell
     - name: 'Decrypt file'
       run: openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out server.key -base64 -K ${{secrets.DECRYPTION_KEY}} -iv ${{secrets.DECRYPTION_IV}}
     - name: 'Authorize'
       run: |
         echo username value ${{ secrets.USERNAME_STAGING }}
-        sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --setdefaultdevhubusername --setalias=hub-org
+        node_modules/sfdx-cli/bin/run force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --setdefaultdevhubusername --setalias=hub-org
     - name: "Install App and Create Delta"   
       run: |
         sudo npm install sfdx-git-delta@latest -g
@@ -48,14 +48,14 @@ jobs:
         sgd --to pr --from origin/QA_Release1 --repo . --output .
         cat package/package.xml
     - name: 'Static Code Analysis'
-      run: sfdx scanner:run --target=force-app --outputfile=results.csv --format=csv > results.csv
+      run: node_modules/sfdx-cli/bin/run scanner:run --target=force-app --outputfile=results.csv --format=csv > results.csv
     - name: Archive static code analysis results
       uses: actions/upload-artifact@v2
       with:
         name: static-code-analysis-report
         path: results.csv
     - name: 'Convert Metadata'
-      run: sfdx force:source:convert --rootdir=force-app --manifest=package/package.xml --outputdir=convert
+      run: node_modules/sfdx-cli/bin/run force:source:convert --rootdir=force-app --manifest=package/package.xml --outputdir=convert
     - name: 'Run Test on Metadata'
-      run: sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -u hub-org
+      run: node_modules/sfdx-cli/bin/run force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -u hub-org
 
